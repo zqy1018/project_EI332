@@ -1,14 +1,15 @@
-module io_output(addr, datain, write_io_enable, io_clk, out_port0, out_port1, out_port2);
+`default_nettype none
+
+module io_output(
+    input [31: 0] addr, 
+    input [31: 0] datain, 
+    input write_io_enable, 
+    input io_clk, 
+    output reg [31: 0] out_port0, 
+    output reg [31: 0] out_port1, 
+    output reg [31: 0] out_port2
+);
     // TODO: 添加一个 reset 信号
-    input   [31: 0]     addr, datain;
-    input               write_io_enable, io_clk;
-
-    output  [31: 0]     out_port0, out_port1, out_port2;
-    // 三个输出端口
-
-    reg     [31: 0]     out_port0;
-    reg     [31: 0]     out_port1;
-    reg     [31: 0]     out_port2;
     // TODO: 尝试数组化
 
     always @ (posedge io_clk)

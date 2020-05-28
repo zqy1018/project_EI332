@@ -1,13 +1,10 @@
-module sevenseg(data, led_segments);
+`default_nettype none
+
+module sevenseg(
+    input [3: 0] data, 
+    output reg [6: 0] led_segments
+);
     // 七段译码器
-    
-    input   [3: 0]      data;
-    // 0-9，至少需要 4 个 bit
-
-    output  [6: 0]      led_segments;
-    // 输出，7 段
-
-    reg     [6: 0]      led_segments;
     
     always @ (*)
     begin

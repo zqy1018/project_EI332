@@ -1,9 +1,9 @@
 `default_nettype none
 
 module alu (
-    input wire [31: 0] a,
-    input wire [31: 0] b,
-    input wire [3: 0]  aluc, 
+    input [31: 0] a,
+    input [31: 0] b,
+    input [3: 0]  aluc, 
     output reg [31: 0] res, 
     output reg is_zero
 );

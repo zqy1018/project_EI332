@@ -1,9 +1,9 @@
 `default_nettype none
 
 module sc_cu (
-    input wire [5: 0] op, 
-    input wire [5: 0] func, 
-    input wire is_zero, 
+    input [5: 0] op, 
+    input [5: 0] func, 
+    input is_zero, 
 
     output wire wmem,
     output wire wreg, 

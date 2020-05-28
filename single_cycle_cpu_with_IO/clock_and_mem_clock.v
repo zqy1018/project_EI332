@@ -1,7 +1,7 @@
 `default_nettype none
 
 module clock_and_mem_clock(
-    input wire main_clk, 
+    input main_clk, 
     output reg clock_out, 
     output wire mem_clk
 );
