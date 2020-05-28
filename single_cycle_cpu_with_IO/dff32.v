@@ -1,13 +1,20 @@
-module dff32 (d,clk,clrn,q);
-   input  [31:0] d;
-   input  clk,clrn;
-   output [31:0] q;
-   reg [31:0]    q;
-   always @ (negedge clrn or posedge clk)
-      if (clrn == 0) begin
-          // q <=0;
-          q <= -4;
-      end else begin
-          q <= d;
-      end
+`default_nettype none
+
+module dff32 (
+    input [31: 0] d,
+    input clk,
+    input resetn,
+    output reg [31: 0] q
+);
+    // 一个四位 D Flip Flop
+
+    always @ (negedge resetn or posedge clk)
+    begin
+        if (resetn == 0) 
+            // q <=0;
+            q <= -4;
+        else 
+            q <= d;
+    end
+
 endmodule
