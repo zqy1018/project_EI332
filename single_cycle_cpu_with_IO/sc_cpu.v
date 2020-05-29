@@ -15,7 +15,12 @@ module sc_cpu (clock,resetn,inst,mem,pc,wmem,alu,data);
    wire [15:0]   imm = {16{e}};                // high 16 sign bit
    wire [31:0]   immediate = {imm,inst[15:0]}; // sign extend to high 16
    
-   dff32 ip (npc,clock,resetn,pc);  // define a D-register for PC
+   dff32 ip(
+      .d(npc), 
+      .clk(clock),
+      .resetn(resetn),
+      .q(pc)
+   );  // define a D-register for PC
    
     cla32 pcplus4 (pc,32'h4, 1'b0,p4);
     cla32 br_adr (p4,offset,1'b0,adr);

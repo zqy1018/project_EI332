@@ -3,10 +3,9 @@
 module io_input(
     input [31: 0] addr, 
     input io_clk, 
-    input [31: 0] in_port0, in_port1, 
-    output wire [31: 0] io_read_data, 
-    output reg [31: 0] in_reg0, 
-    output reg [31: 0] in_reg1
+    input [31: 0] in_port0, 
+    input [31: 0] in_port1, 
+    output wire [31: 0] io_read_data
 );
     // I/O 输入部分
     // TODO: 添加一个 reset 信号
@@ -18,6 +17,8 @@ module io_input(
         .addr(addr[7: 2]), 
         .y(io_read_data)
     );
+
+    reg [31: 0] in_reg0, in_reg1;
 
     initial
     begin
