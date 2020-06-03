@@ -1,0 +1,17 @@
+DEPTH = 8;           % Memory depth and width are required %
+WIDTH = 32;           % Enter a decimal number %
+ADDRESS_RADIX = HEX;  % Address and value radixes are optional %
+DATA_RADIX = HEX;     % Enter BIN, DEC, HEX, or OCT; unless %
+                      % otherwise specified, radixes = HEX %
+CONTENT
+BEGIN
+[0..7] : 00000000;   % Range--Every address from 0 to 1F = 00000000 %
+
+0 : 20010090;        % (00) main: addi $1, $0, 144   # in_port (named zqy)        %
+1 : 20020080;        % (04)       addi $2, $0, 128   # out_port                   %
+2 : 8c250000;        % (08) loop: lw   $5, 0($1)     # input in_port to $5        %
+3 : 00053400;        % (0c)       sll  $6, $5, 16    # left shift by 16 bits      %
+4 : 34c75555;        % (10)       ori  $7, $6, 21845 # or it with 0x00005555      %
+5 : ac470000;        % (14)       sw   $7, 0($2)     # output in_port to out_port %
+6 : 08000002;        % (18)       j loop             #                            %
+END ;
