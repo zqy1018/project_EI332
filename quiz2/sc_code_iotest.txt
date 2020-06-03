@@ -1,0 +1,7 @@
+main: addi $1, $0, 144 # in_port (named zqy)
+      addi $2, $0, 128 # out_port
+loop: lw   $8, 0($1)         # input in_port to $8
+      sll  $9, $8, 28        # left shift by 28 bits
+      add  $10, $8, $9       # find hamming distance
+      sw   $10, 0($2)        # output the result to out_port
+      j loop
