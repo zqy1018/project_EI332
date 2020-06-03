@@ -7,5 +7,7 @@
 
 ## 目录
 
-1. 单周期含 I/O 端口的 CPU。
-2. 含 I/O 端口的 5 段流水线 CPU。（等待更新）
+1. 单周期含 I/O 端口的 CPU（single_cycle_cpu_with_IO）
+2. 含 I/O 端口的 5 段流水线 CPU（等待更新）
+3. 实验考试演练一（quiz1）
+4. 实验考试演练二（quiz2）
