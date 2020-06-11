@@ -40,7 +40,7 @@ module sc_cu (
                 
     assign i_addi = (op == 6'b001000);      // 001000
     assign i_andi = (op == 6'b001100);      // 001100
-    assign i_ori  = (op == 6'b001110);      // 001101
+    assign i_ori  = (op == 6'b001101);      // 001101
     assign i_xori = (op == 6'b001110);      // 001110
     assign i_lw   = (op == 6'b100011);      // 100011
     assign i_sw   = (op == 6'b101011);      // 101011
