@@ -53,6 +53,9 @@ set_global_assignment -name PARTITION_FITTER_PRESERVATION_LEVEL PLACEMENT_AND_RO
 set_global_assignment -name PARTITION_COLOR 16764057 -section_id Top
 set_global_assignment -name SIMULATION_MODE FUNCTIONAL
 set_global_assignment -name EDA_GENERATE_FUNCTIONAL_NETLIST ON -section_id eda_simulation
+set_instance_assignment -name PARTITION_HIERARCHY root_partition -to | -section_id Top
+set_global_assignment -name INCREMENTAL_VECTOR_INPUT_SOURCE "D:/project_mips/pipelined/pipelined_computer_test_wave_01.vwf"
+set_global_assignment -name VERILOG_FILE pipe_fwd_controller.v
 set_global_assignment -name VECTOR_WAVEFORM_FILE pipelined_computer_test_wave_02.vwf
 set_global_assignment -name VECTOR_WAVEFORM_FILE pipelined_computer_test_wave_01.vwf
 set_global_assignment -name MIF_FILE sc_instmem.mif
@@ -81,5 +84,3 @@ set_global_assignment -name VERILOG_FILE io_input_mux.v
 set_global_assignment -name VERILOG_FILE io_input.v
 set_global_assignment -name VERILOG_FILE in_port.v
 set_global_assignment -name VERILOG_FILE alu.v
-set_instance_assignment -name PARTITION_HIERARCHY root_partition -to | -section_id Top
-set_global_assignment -name INCREMENTAL_VECTOR_INPUT_SOURCE "D:/project_mips/pipelined/pipelined_computer_test_wave_01.vwf"

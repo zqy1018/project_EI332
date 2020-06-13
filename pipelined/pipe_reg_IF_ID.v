@@ -18,7 +18,7 @@ module pipe_reg_IF_ID(
         if (resetn == 0) begin
             ID_pc_plus_4 <= 0;
             inst_stored <= 0;
-        end else if (wpcir != 0) begin
+        end else if (wpcir == 0) begin
             ID_pc_plus_4 <= pc_plus_4;
             inst_stored <= inst;
         end

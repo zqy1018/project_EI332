@@ -4,8 +4,8 @@ module pipe_reg_PC(
     input [31: 0] next_pc, 
     input wpcir, 
     input clock, 
-    input resetn,
-     
+    input resetn, 
+    
     output reg [31: 0] pc
 );
     // PC 寄存器模块。由原来的 dff32 修改而来。
@@ -14,7 +14,7 @@ module pipe_reg_PC(
     begin
         if (resetn == 0) 
             pc <= -4;
-        else if (wpcir != 0)
+        else if (wpcir == 0)
             pc <= next_pc;
     end
 

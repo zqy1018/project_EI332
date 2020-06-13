@@ -10,9 +10,6 @@ module sc_cu (
     input [4: 0] ID_rs, 
     input [4: 0] ID_rt, 
     input [4: 0] EXE_write_reg_number, 
-    input MEM_wreg, 
-    input MEM_m2reg, 
-    input [4: 0] MEM_write_reg_number, 
 
     output wire wmem,
     output wire wreg, 
@@ -25,9 +22,7 @@ module sc_cu (
     output wire jal, 
     output wire [1: 0] pcsource, 
     output wire ID_bubble, 
-    output wire wpcir, 
-    output reg [1: 0] fwd_q1_sel, 
-    output reg [1: 0] fwd_q2_sel
+    output wire wpcir
 );
     // 控制单元。采用组合逻辑的方式产生控制信号（共 10 个）。
 
@@ -74,18 +69,18 @@ module sc_cu (
     assign rt_read_reg = i_add | i_sub | i_and | i_or | i_xor | i_sll | i_srl | i_sra | 
                          i_sw | i_beq | i_bne;
     // 为 1：本条指令读取 rt 寄存器
-    assign wpcir = ~(EXE_wreg & EXE_m2reg & (EXE_write_reg_number != 0) &
+    assign wpcir = EXE_wreg & EXE_m2reg & (EXE_write_reg_number != 0) &
             ((rs_read_reg & (EXE_write_reg_number == ID_rs)) |
-             (rt_read_reg & (EXE_write_reg_number == ID_rt))));
+             (rt_read_reg & (EXE_write_reg_number == ID_rt)));
     // 具有这种特征的都需要停下。
     // 目前只有 lw 导致的停顿。后面可能会有别的
-    
-    wire stall;
-    assign stall = wpcir & ~EXE_bubble;
-    assign ID_bubble = (pcsource != 2'b00);
 
-    assign pcsource[0] = (( i_beq & is_zero ) | (i_bne & ~is_zero) | i_j | i_jal) & stall;
-    assign pcsource[1] = (i_jr | i_j | i_jal) & stall;
+    wire nostall;
+    assign nostall = ~(wpcir | EXE_bubble);
+    assign ID_bubble = |pcsource;
+
+    assign pcsource[0] = (( i_beq & is_zero ) | (i_bne & ~is_zero) | i_j | i_jal) & nostall;
+    assign pcsource[1] = (i_jr | i_j | i_jal) & nostall;
     // 为 0：PC + 4
     // 为 1：选择转移地址（beq, bne）
     // 为 2：选择寄存器地址（jr）
@@ -94,68 +89,41 @@ module sc_cu (
    
     assign wreg =  (i_add | i_sub | i_and | i_or   | i_xor  |
                     i_sll | i_srl | i_sra | i_addi | i_andi |
-                    i_ori | i_xori | i_lw | i_lui  | i_jal) & stall;
+                    i_ori | i_xori | i_lw | i_lui  | i_jal) & nostall;
     // 为 1：写寄存器堆，否则不写
    
-    assign aluc[3] = i_sra & stall;
-    assign aluc[2] = (i_sub | i_or | i_srl | i_sra | i_ori | i_lui) & stall;
-    assign aluc[1] = (i_xor | i_sll | i_srl | i_sra | i_xori | i_lui) & stall;
-    assign aluc[0] = (i_and | i_or | i_sll | i_srl | i_sra | i_andi | i_ori) & stall;
+    assign aluc[3] = i_sra;
+    assign aluc[2] = i_sub | i_or | i_srl | i_sra | i_ori | i_lui;
+    assign aluc[1] = i_xor | i_sll | i_srl | i_sra | i_xori | i_lui;
+    assign aluc[0] = i_and | i_or | i_sll | i_srl | i_sra | i_andi | i_ori;
     // ALU 的控制信号，每种组合表示一种运算
 
-    assign shift   = (i_sll | i_srl | i_sra) & stall;
+    assign shift   = i_sll | i_srl | i_sra;
     // 为 1：选择移位位数（shift amount）
     // 为 0：选择寄存器堆中的值
 
-    assign aluimm  = (i_addi | i_andi | i_ori | i_xori | i_lw | i_sw | i_lui) & stall;
+    assign aluimm  = i_addi | i_andi | i_ori | i_xori | i_lw | i_sw | i_lui;
     // 为 1：选择扩展后的立即数
     // 为 0：选择寄存器堆的数据
 
-    assign sext    = (i_addi | i_lw | i_sw | i_beq | i_bne) & stall;
+    assign sext    = i_addi | i_lw | i_sw | i_beq | i_bne;
     // 为 1：做带符号扩展
     // 为 0：做零扩展
 
-    assign wmem    = i_sw & stall;
+    assign wmem    = i_sw & nostall;
     // 为 1：写存储器
     // 为 0：不写
    
-    assign m2reg   = i_lw & stall;
+    assign m2reg   = i_lw;
     // 为 1：选择从存储器中读出的数据
     // 为 0：选择 ALU 的运算结果
     
-    assign regrt   = (i_addi | i_andi | i_ori | i_xori | i_lw | i_lui) & stall;
+    assign regrt   = i_addi | i_andi | i_ori | i_xori | i_lw | i_lui;
     // 为 1：选择 rt 作为寄存器堆写入目标
     // 为 0：选择 rd 作为寄存器堆写入目标
    
-    assign jal     = i_jal & stall;
+    assign jal     = i_jal & nostall;
     // 为 1：选择 PC + 4 stall
     // 为 0：选择 ALU 或者存储器数据作为写入寄存器堆的值
-
-    always @ (*)
-    begin
-        fwd_q1_sel = 2'b00;
-        if (EXE_wreg && (EXE_m2reg == 0) && 
-            (EXE_write_reg_number != 0) && (EXE_write_reg_number == ID_rs))
-            fwd_q1_sel = 2'b01;
-        else if (MEM_wreg && 
-            (MEM_write_reg_number != 0) && (MEM_write_reg_number == ID_rs)) begin
-            if (MEM_m2reg == 0)
-                fwd_q1_sel = 2'b10;
-            else
-                fwd_q1_sel = 2'b11;
-        end
-        
-        fwd_q2_sel = 2'b00;
-        if (EXE_wreg && (EXE_m2reg == 0) && 
-            (EXE_write_reg_number != 0) && (EXE_write_reg_number == ID_rt))
-            fwd_q2_sel = 2'b01;
-        else if (MEM_wreg && 
-            (MEM_write_reg_number != 0) && (MEM_write_reg_number == ID_rt)) begin
-            if (MEM_m2reg == 0)
-                fwd_q2_sel = 2'b10;
-            else
-                fwd_q2_sel = 2'b11;
-        end
-    end
 
 endmodule

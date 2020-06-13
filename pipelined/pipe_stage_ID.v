@@ -98,9 +98,6 @@ module pipe_stage_ID(
         .ID_rt(inst_stored[20: 16]),
         .EXE_wreg(EXE_wreg), 
         .EXE_m2reg(EXE_m2reg),
-        .MEM_wreg(MEM_wreg), 
-        .MEM_m2reg(MEM_m2reg), 
-        .MEM_write_reg_number(MEM_write_reg_number),
 
         .wmem(ID_wmem), 
         .wreg(ID_wreg), 
@@ -113,11 +110,23 @@ module pipe_stage_ID(
         .pcsource(pcsource), 
         .regrt(regrt), 
         .ID_bubble(ID_bubble),
-        .wpcir(wpcir), 
-        .fwd_q1_sel(fwd_q1_sel), 
-        .fwd_q2_sel(fwd_q2_sel)
+        .wpcir(wpcir)
     );
     // 利用原有的 sc_cu 模块
     // bubble 均为低电平有效
+
+    pipe_fwd_controller pfc(
+        .EXE_wreg(EXE_wreg), 
+        .MEM_wreg(MEM_wreg), 
+        .EXE_m2reg(EXE_m2reg), 
+        .MEM_m2reg(MEM_m2reg), 
+        .ID_rs(inst_stored[25: 21]), 
+        .ID_rt(inst_stored[20: 16]),
+        .EXE_write_reg_number(EXE_write_reg_number), 
+        .MEM_write_reg_number(MEM_write_reg_number),
+        
+        .fwd_q1_sel(fwd_q1_sel), 
+        .fwd_q2_sel(fwd_q2_sel)
+    );
 
 endmodule
